@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FURY — бриф первого релиза</title>
+<meta name="description" content="FURY — мобильный F2P авто-баттлер. Внутренний бриф: что делаем, для кого, нерушимые принципы и скоуп первого релиза.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:oklch(.1448 0 0);color:oklch(.9465 .0099 87.47);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-family:'Golos Text',system-ui,sans-serif}
+  a{color:var(--red,oklch(.6329 .2075 31.49));text-decoration:none}
+  a:hover{color:oklch(.72 .195 38)}
+  ::selection{background:var(--red,oklch(.6329 .2075 31.49));color:oklch(.1448 0 0)}
+  @keyframes furyticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes furyblink{0%,100%{opacity:1}50%{opacity:.15}}
+  @keyframes furycursor{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ Sticky top-bar — reveals after the red hero scrolls past ══════════ -->
+<header id="fury-topbar" aria-hidden="true" style="position:fixed;top:0;left:0;right:0;z-index:9999;transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .45s cubic-bezier(.16,1,.3,1);background:color-mix(in oklch, oklch(.1448 0 0) 85%, transparent);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border-bottom:1px solid rgba(240,237,230,.12)">
+  <div style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:.9rem clamp(24px,5vw,48px)">
+    <a data-t="brand" href="#fury-hero" style="font-family:'Golos Text',sans-serif;font-weight:800;letter-spacing:.02em;font-size:1.05rem;color:var(--red,oklch(.6329 .2075 31.49))">FURY</a>
+    <nav style="display:flex;gap:clamp(1rem,2.4vw,2.2rem);align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase">
+      <a data-t="nav.game" href="#o-igre" style="color:oklch(.9465 .0099 87.47);opacity:.7">Игра</a>
+      <a data-t="nav.principles" href="#principy" style="color:oklch(.9465 .0099 87.47);opacity:.7">Принципы</a>
+      <a data-t="nav.release" href="#reliz" style="color:oklch(.9465 .0099 87.47);opacity:.7">Релиз</a>
+      <a data-t="nav.plan" href="#plan" style="color:oklch(.9465 .0099 87.47);opacity:.7">План</a>
+      <a data-t="nav.next" href="#dalshe" style="color:oklch(.1448 0 0);background:var(--red,oklch(.6329 .2075 31.49));padding:.55rem .95rem;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)">Дальше →</a>
+    </nav>
+  </div>
+</header>
+
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <filter id="furygrain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch" seed="4"></feTurbulence>
+    <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1 0 0 0 0"></feColorMatrix>
+  </filter>
+</svg>
+
+<div id="fury-root" style="position:relative;width:100%;overflow:hidden">
+
+  <div id="fury-scan" aria-hidden="true" style="position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.10) 2px,rgba(0,0,0,.10) 4px);pointer-events:none;z-index:9998;mix-blend-mode:multiply"></div>
+  <div id="fury-noise" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:.06;filter:url(#furygrain)"></div>
+  <div aria-hidden="true" style="position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(1200px,100vw);border-left:1px solid rgba(240,237,230,.045);border-right:1px solid rgba(240,237,230,.045);pointer-events:none;z-index:1"></div>
+
+  <!-- ══════════ HERO — full red viewport ══════════ -->
+  <section id="fury-hero" data-screen-label="Hero — FURY" style="position:relative;min-height:100svh;display:flex;flex-direction:column;background:var(--red,oklch(.6329 .2075 31.49));color:oklch(.1448 0 0);overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;inset:0;background-image:linear-gradient(rgba(10,10,10,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,.06) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(120% 90% at 50% 15%,#000 30%,transparent 78%);-webkit-mask-image:radial-gradient(120% 90% at 50% 15%,#000 30%,transparent 78%)"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;width:100%;margin:0 auto;padding:1.6rem clamp(24px,5vw,48px);position:relative;z-index:3">
+      <span data-t="brand" style="font-family:'Golos Text',sans-serif;font-weight:800;letter-spacing:.02em;font-size:1.05rem">FURY</span>
+      <nav style="display:flex;gap:clamp(1rem,2.4vw,2.2rem);align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase">
+        <a data-t="nav.game" href="#o-igre" style="color:oklch(.1448 0 0);opacity:.75">Игра</a>
+        <a data-t="nav.principles" href="#principy" style="color:oklch(.1448 0 0);opacity:.75">Принципы</a>
+        <a data-t="nav.release" href="#reliz" style="color:oklch(.1448 0 0);opacity:.75">Релиз</a>
+        <a data-t="nav.plan" href="#plan" style="color:oklch(.1448 0 0);opacity:.75">План</a>
+        <a data-t="nav.next" href="#dalshe" style="color:oklch(.9465 .0099 87.47);background:oklch(.1448 0 0);padding:.55rem .95rem;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)">Дальше →</a>
+      </nav>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:1200px;width:100%;margin:0 auto;padding:2rem clamp(24px,5vw,48px);position:relative;z-index:3">
+      <div style="display:inline-flex;align-items:center;gap:.6rem;width:fit-content;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:oklch(.1448 0 0);border:1px solid rgba(10,10,10,.32);padding:.5rem .9rem;margin-bottom:2rem">
+        <span style="width:6px;height:6px;background:oklch(.1448 0 0);animation:furyblink 1.6s step-end infinite"></span><span data-t="hero.badge">Внутренний бриф · Мобильный F2P авто-баттлер</span>
+      </div>
+      <h1 data-t="brand" style="font-family:'Golos Text',sans-serif;font-weight:800;font-size:clamp(5.5rem,22vw,17rem);line-height:.82;letter-spacing:-.05em;margin:0;color:oklch(.1448 0 0)">FURY</h1>
+      <p data-t="hero.desc" style="font-family:'Golos Text',sans-serif;font-weight:500;font-size:clamp(1.15rem,2.4vw,1.7rem);line-height:1.3;max-width:34ch;margin:1.8rem 0 0;color:oklch(.1448 0 0)">Собираешь отряд из шести героев — бой идёт сам. Ядро игры — рейтинговый PvP с честным серверным боем. Этот бриф фиксирует, что входит в первый релиз.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.4rem;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.8rem;letter-spacing:.05em">
+        <a data-t="hero.cta1" href="#o-igre" style="display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 1.7rem;background:oklch(.1448 0 0);color:oklch(.9465 .0099 87.47);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)">Что делаем →</a>
+        <a data-t="hero.cta2" href="#reliz" style="display:inline-flex;align-items:center;gap:.5rem;padding:.95rem 1.7rem;background:transparent;color:oklch(.1448 0 0);border:2px solid rgba(10,10,10,.32);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)">Скоуп релиза</a>
+      </div>
+    </div>
+
+    <div style="position:relative;z-index:3;border-top:1px solid rgba(10,10,10,.22);overflow:hidden;padding:.9rem 0">
+      <div style="display:flex;width:max-content;animation:furyticker 34s linear infinite;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:oklch(.1448 0 0)">
+        <span style="display:flex;gap:2.2rem;padding-right:2.2rem"><span>Авто-бой</span><span>·</span><span>Рейтинговый PvP</span><span>·</span><span>PvE-фарм</span><span>·</span><span>6 героев в отряде</span><span>·</span><span>4 роли</span><span>·</span><span>Бой на сервере</span><span>·</span><span>Реплей по сиду</span><span>·</span><span>Лиги и сезоны</span><span>·</span><span>Гача с гарантом</span><span>·</span><span>Монетизация с первого дня</span><span>·</span></span>
+        <span aria-hidden="true" style="display:flex;gap:2.2rem;padding-right:2.2rem"><span>Авто-бой</span><span>·</span><span>Рейтинговый PvP</span><span>·</span><span>PvE-фарм</span><span>·</span><span>6 героев в отряде</span><span>·</span><span>4 роли</span><span>·</span><span>Бой на сервере</span><span>·</span><span>Реплей по сиду</span><span>·</span><span>Лиги и сезоны</span><span>·</span><span>Гача с гарантом</span><span>·</span><span>Монетизация с первого дня</span><span>·</span></span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 01 · Что делаем и для кого ══════════ -->
+  <section id="o-igre" data-screen-label="01 Что и для кого" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(2rem,5vw,5rem);align-items:start;margin-bottom:3rem">
+        <div>
+          <div data-t="s01.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 01 ] · Что делаем и для кого</div>
+          <h2 data-t="s01.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0;text-wrap:balance">Мобильный авто-баттлер с ядром в рейтинговом PvP</h2>
+          <p data-t="s01.lead" style="margin:1.2rem 0 0;font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.55;color:rgba(240,237,230,.6);max-width:66ch">База жанра как у Tap&nbsp;Force: сбор отряда, авто-бой, арена, фарм. Наши отличия — честный серверный бой, двухслойный рейтинг и монетизация с первого дня.</p>
+        </div>
+        <div>
+          <ul style="list-style:none;margin:0 0 2.2rem;padding:0;display:flex;flex-direction:column;gap:1.15rem"><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.85rem;padding-top:.15rem">→</span><span data-t="s01.li1">Бой идёт автоматически. Игрок решает три вещи: состав, расстановка, прокачка.</span></li><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.85rem;padding-top:.15rem">→</span><span data-t="s01.li2">Ядро — асинхронный рейтинговый PvP: лиги, ТОП, сезоны.</span></li><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.85rem;padding-top:.15rem">→</span><span data-t="s01.li3">Кампания против ботов — источник ресурсов для прокачки.</span></li></ul>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem"><div style="border:1px solid rgba(240,237,230,.14);padding:1rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"><div data-t="s01.card1.k" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.4);margin-bottom:.5rem">Платформа</div><div data-t="s01.card1.v" style="font-weight:700;font-size:.95rem">Мобайл · F2P</div></div><div style="border:1px solid rgba(240,237,230,.14);padding:1rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"><div data-t="s01.card2.k" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.4);margin-bottom:.5rem">Бой</div><div data-t="s01.card2.v" style="font-weight:700;font-size:.95rem">Пошаговый, авто</div></div><div style="border:1px solid rgba(240,237,230,.14);padding:1rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)"><div data-t="s01.card3.k" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.4);margin-bottom:.5rem">Ядро</div><div data-t="s01.card3.v" style="font-weight:700;font-size:.95rem">Рейтинговый PvP</div></div></div>
+        </div>
+      </div>
+      <div data-reveal>
+        <div data-t="s01.audLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">Для кого</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12)"><div style="background:oklch(.1448 0 0);padding:clamp(1.5rem,2.5vw,2.4rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.8rem;margin-bottom:1rem">01</div><p data-t="s01.c1" style="margin:0;font-size:clamp(1rem,1.15vw,1.12rem);line-height:1.5;color:rgba(240,237,230,.78)">Казуал и мидкор: любит собирать героев и мериться рейтингом, не любит управлять боем вручную.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.5rem,2.5vw,2.4rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.8rem;margin-bottom:1rem">02</div><p data-t="s01.c2" style="margin:0;font-size:clamp(1rem,1.15vw,1.12rem);line-height:1.5;color:rgba(240,237,230,.78)">Сессия 5–10 минут: провёл несколько боёв, вложил награды в прокачку, вышел.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.5rem,2.5vw,2.4rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.8rem;margin-bottom:1rem">03</div><p data-t="s01.c3" style="margin:0;font-size:clamp(1rem,1.15vw,1.12rem);line-height:1.5;color:rgba(240,237,230,.78)">Играет с телефона короткими заходами — в дороге и в перерывах.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 02 · Нерушимые принципы ══════════ -->
+  <section id="principy" data-screen-label="02 Принципы" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem;max-width:760px">
+        <div data-t="s02.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 02 ] · Нерушимые принципы</div>
+        <h2 data-t="s02.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Десять решений, которые не пересматриваем</h2>
+        <p data-t="s02.lead" style="margin:1.2rem 0 0;font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.55;color:rgba(240,237,230,.6);max-width:66ch">Это контракт первой итерации. Всё остальное на странице — следствия этих десяти пунктов.</p>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12)"><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">01</span><span data-t="s02.i1" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Жанр</b> — hero-collector авто-баттлер по модели Tap&nbsp;Force.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">02</span><span data-t="s02.i2" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Честный бой</b> — исход считает сервер, клиент проигрывает реплей. Подделать результат нельзя.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">03</span><span data-t="s02.i3" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Стек</b> — клиент на Unity, свой сервер, симуляция боя на Lua.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">04</span><span data-t="s02.i4" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Боёвка</b> — пошаговая: инициатива, раунды, энергия, ультимейты.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">05</span><span data-t="s02.i5" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Отряд</b> — 6 героев, 4 роли; фракции — на старте треугольник A/B/C.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">06</span><span data-t="s02.i6" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Прокачка</b> — три вектора: уровень до 50, звёзды за дубликаты, способности. Максимум ≈ $100 на героя.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">07</span><span data-t="s02.i7" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Гача</b> — призыв даёт целого героя, осколки — путь без оплаты, гарант страхует от невезения.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">08</span><span data-t="s02.i8" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">PvP</b> — асинхронный: бой со слепком обороны; лиги, ТОП с обменом местами, сезоны по 4 недели.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">09</span><span data-t="s02.i9" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Монетизация</b> — с первого дня: офферы, персонализация, две подписки.</span></div><div style="background:oklch(.1448 0 0);padding:1.2rem 1.4rem;display:flex;gap:1rem"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;padding-top:.15rem">10</span><span data-t="s02.i10" style="font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><b style="color:rgba(240,237,230,.95);font-weight:700">Контент из формулы</b> — сила героя = HP × урон; ботов и сложность генерируем, не собираем руками.</span></div></div>
+    </div>
+  </section>
+
+  <!-- ══════════ 03 · Игровой цикл ══════════ -->
+  <section id="cikl" data-screen-label="03 Игровой цикл" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="text-align:center;max-width:760px;margin:0 auto 3rem">
+        <div data-t="s03.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 03 ] · Игровой цикл</div>
+        <h2 data-t="s03.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Замкнутая петля из четырёх шагов</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;align-items:stretch"><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.3rem,2vw,2rem);display:flex;flex-direction:column;gap:.9rem;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"><div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:800;color:var(--red,oklch(.6329 .2075 31.49));line-height:1">01</div><h3 data-t="s03.c1.h" style="margin:0;font-weight:700;font-size:1.15rem;letter-spacing:-.01em">Собери отряд</h3><p data-t="s03.c1.p" style="margin:0;font-size:.95rem;line-height:1.45;color:rgba(240,237,230,.62)">Гача даёт героев, дубликаты и осколки.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.3rem,2vw,2rem);display:flex;flex-direction:column;gap:.9rem;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"><div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:800;color:var(--red,oklch(.6329 .2075 31.49));line-height:1">02</div><h3 data-t="s03.c2.h" style="margin:0;font-weight:700;font-size:1.15rem;letter-spacing:-.01em">Сражайся</h3><p data-t="s03.c2.p" style="margin:0;font-size:.95rem;line-height:1.45;color:rgba(240,237,230,.62)">Рейтинговый PvP и кампания.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.3rem,2vw,2rem);display:flex;flex-direction:column;gap:.9rem;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"><div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:800;color:var(--red,oklch(.6329 .2075 31.49));line-height:1">03</div><h3 data-t="s03.c3.h" style="margin:0;font-weight:700;font-size:1.15rem;letter-spacing:-.01em">Получи награду</h3><p data-t="s03.c3.p" style="margin:0;font-size:.95rem;line-height:1.45;color:rgba(240,237,230,.62)">Валюты, ресурсы, осколки.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.3rem,2vw,2rem);display:flex;flex-direction:column;gap:.9rem;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)"><div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:800;color:var(--red,oklch(.6329 .2075 31.49));line-height:1">04</div><h3 data-t="s03.c4.h" style="margin:0;font-weight:700;font-size:1.15rem;letter-spacing:-.01em">Усиль отряд</h3><p data-t="s03.c4.p" style="margin:0;font-size:.95rem;line-height:1.45;color:rgba(240,237,230,.62)">Уровень, звёзды, способности.</p></div></div>
+      <div data-reveal style="margin-top:1.4rem;display:flex;gap:1rem;align-items:flex-start;background:color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 11%, oklch(.1448 0 0));border-left:2px solid var(--red,oklch(.6329 .2075 31.49));padding:1.3rem 1.6rem">
+        <span data-t="s03.noteLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));padding-top:.2rem;white-space:nowrap">Цикл</span>
+        <p data-t="s03.note" style="margin:0;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5">Награды идут в прокачку, прокачка открывает более сложные бои и рейтинг выше. Петля не рвётся.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 04 · Режимы на старте ══════════ -->
+  <section data-screen-label="04 Режимы" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:3rem">
+        <div data-t="s04.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 04 ] · Режимы на старте</div>
+        <h2 data-t="s04.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Ядро и кран ресурсов</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem">
+        <div style="border:1px solid var(--red,oklch(.6329 .2075 31.49));background:color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 8%, oklch(.1448 0 0));padding:clamp(1.6rem,2.6vw,2.6rem);display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem"><h3 data-t="s04.a.h3" style="margin:0;font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.3rem,2vw,1.7rem);letter-spacing:-.02em">Рейтинговый PvP</h3><span data-t="s04.a.tag" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:oklch(.1448 0 0);background:var(--red,oklch(.6329 .2075 31.49));padding:.35rem .6rem">Ядро</span></div>
+          <ul style="list-style:none;margin:0 0 1.6rem;padding:0;display:flex;flex-direction:column;gap:.75rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.82)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s04.a.li1">Атакуешь слепок обороны другого игрока — соперник не нужен онлайн.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.82)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s04.a.li2">Лиги с подъёмом и спуском, абсолютный ТОП, сезоны.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.82)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s04.a.li3">Проиграл защиту — потерял очки.</span></li></ul>
+          <div style="margin-top:auto;padding-top:1.2rem;border-top:1px solid rgba(240,237,230,.14);font-size:.92rem;line-height:1.45;color:rgba(240,237,230,.7)"><span data-t="s04.footLabel" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));display:block;margin-bottom:.4rem">Плюс режима</span><span data-t="s04.a.foot">Игроки создают контент друг для друга — режим не заканчивается.</span></div>
+        </div>
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.6rem);display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem"><h3 data-t="s04.b.h3" style="margin:0;font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.3rem,2vw,1.7rem);letter-spacing:-.02em">Кампания против ботов</h3><span data-t="s04.b.tag" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.5);border:1px solid rgba(240,237,230,.2);padding:.35rem .6rem">Фарм</span></div>
+          <ul style="list-style:none;margin:0 0 1.6rem;padding:0;display:flex;flex-direction:column;gap:.75rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.82)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s04.b.li1">Стадии с растущей сложностью.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.82)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s04.b.li2">Основной источник ресурсов прокачки и осколков.</span></li></ul>
+          <div style="margin-top:auto;padding-top:1.2rem;border-top:1px solid rgba(240,237,230,.14);font-size:.92rem;line-height:1.45;color:rgba(240,237,230,.7)"><span data-t="s04.footLabel" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));display:block;margin-bottom:.4rem">Плюс режима</span><span data-t="s04.b.foot">Стадии создаёт формула силы — сотни боёв без ручной сборки.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 05 · Боёвка ══════════ -->
+  <section data-screen-label="05 Боёвка" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,4vw,4rem);align-items:start">
+        <div>
+          <div data-t="s05.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 05 ] · Боёвка</div>
+          <h2 data-t="s05.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0;margin-bottom:1.8rem;text-wrap:balance">Пошаговая, детерминированная</h2>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1.15rem"><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.8rem;padding-top:.2rem">01</span><span data-t="s05.li1">Раунд: герои ходят по инициативе, каждый делает одно действие.</span></li><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.8rem;padding-top:.2rem">02</span><span data-t="s05.li2">Действие — атака или способность. Ультимейт уходит по накопленной энергии; энергия капает за атаки, полученный урон и лечение.</span></li><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.8rem;padding-top:.2rem">03</span><span data-t="s05.li3">Позиции работают: фронт прикрывает тыл, ассасины достают задний ряд.</span></li><li style="display:flex;gap:.9rem;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5;color:rgba(240,237,230,.78)"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.8rem;padding-top:.2rem">04</span><span data-t="s05.li4">Урон физический и магический, сверху — преимущество фракций.</span></li></ul>
+        </div>
+        <div style="border:1px solid rgba(240,237,230,.16);background:#080808;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:.5rem;padding:.7rem 1rem;border-bottom:1px solid rgba(240,237,230,.12);background:rgba(240,237,230,.03)">
+            <span style="width:9px;height:9px;border-radius:50%;background:var(--red,oklch(.6329 .2075 31.49))"></span>
+            <span style="width:9px;height:9px;border-radius:50%;background:rgba(240,237,230,.2)"></span>
+            <span style="width:9px;height:9px;border-radius:50%;background:rgba(240,237,230,.2)"></span>
+            <span style="margin-left:.6rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.45)">battle.lua — server</span>
+          </div>
+          <pre style="margin:0;padding:1.3rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:.76rem;line-height:1.75;color:rgba(240,237,230,.8);white-space:pre-wrap;word-break:break-word"><span style="color:rgba(240,237,230,.35)">&gt;</span> resolve_battle(seed=<span style="color:var(--red,oklch(.6329 .2075 31.49))">0x9F3A</span>)
+<span style="color:rgba(240,237,230,.35)">&gt;</span> round 1 · order by speed
+<span style="color:rgba(240,237,230,.35)">&gt;</span> tank → shield · assassin → back row
+<span style="color:rgba(240,237,230,.35)">&gt;</span> ultimate charge: 40 / 100
+<span style="color:oklch(.8003 .1821 151.71)">✓</span> replay hash: <span style="color:rgba(240,237,230,.55)">a1c…d28</span>
+<span style="color:oklch(.8003 .1821 151.71)">✓</span> result: <span style="color:oklch(.8003 .1821 151.71)">verified</span> · <span style="color:rgba(240,237,230,.5)">client can't fake</span><span style="display:inline-block;width:8px;height:1.05em;background:var(--red,oklch(.6329 .2075 31.49));vertical-align:-2px;margin-left:2px;animation:furycursor 1.1s step-end infinite"></span></pre>
+          <div style="padding:1.1rem 1.4rem;border-top:1px solid rgba(240,237,230,.12);display:flex;flex-direction:column;gap:.7rem">
+            <div data-t="s05.codeLabel" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49))">Бой считает сервер на Lua</div>
+            <p data-t="s05.codeText" style="margin:0;font-size:.92rem;line-height:1.5;color:rgba(240,237,230,.7)">Целые числа и рандом от сида дают одинаковый реплей у всех. Сервер решает исход — клиент не может соврать, рейтинг защищён.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 06 · Герои ══════════ -->
+  <section data-screen-label="06 Герои" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s06.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 06 ] · Герои</div>
+        <h2 data-t="s06.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">6 в отряде · 4 роли · фракции A/B/C</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(2rem,4vw,4rem);align-items:start">
+        <div style="display:flex;flex-direction:column;gap:2rem">
+          <div>
+            <div data-t="s06.rolesLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">4 роли</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.6rem"><span data-t="s06.role1" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.04em;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem">Танк</span><span data-t="s06.role2" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.04em;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem">Дамагер</span><span data-t="s06.role3" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.04em;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem">Ассасин</span><span data-t="s06.role4" style="font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.04em;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem">Саппорт</span></div>
+          </div>
+          <div>
+            <div data-t="s06.factionsLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">5 фракций · на старте три</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.6rem"><span style="display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem"><span style="width:10px;height:10px;background:oklch(.6329 .2075 31.49)"></span><span data-t="s06.f1">Красная</span></span><span style="display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem"><span style="width:10px;height:10px;background:oklch(.5312 .2603 266.77)"></span><span data-t="s06.f2">Синяя</span></span><span style="display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;border:1px solid rgba(240,237,230,.2);padding:.55rem .95rem"><span style="width:10px;height:10px;background:oklch(.8003 .1821 151.71)"></span><span data-t="s06.f3">Зелёная</span></span><span style="display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;border:1px dashed rgba(240,237,230,.2);padding:.55rem .95rem;opacity:.5"><span style="width:10px;height:10px;background:oklch(.9465 .0099 87.47)"></span><span data-t="s06.f4">Белая<span style="color:var(--red,oklch(.6329 .2075 31.49))">*</span></span></span><span style="display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;border:1px dashed rgba(240,237,230,.2);padding:.55rem .95rem;opacity:.5"><span style="width:10px;height:10px;background:#000;outline:1px solid rgba(240,237,230,.3)"></span><span data-t="s06.f5">Чёрная<span style="color:var(--red,oklch(.6329 .2075 31.49))">*</span></span></span></div>
+            <p data-t="s06.factionNote" style="margin:1rem 0 0;font-size:.92rem;line-height:1.5;color:rgba(240,237,230,.55)">Красная бьёт синюю, синяя — зелёную, зелёная — красную. Белая и чёрная бьют друг друга; <span style="color:var(--red,oklch(.6329 .2075 31.49))">*</span> вводим после релиза.</p>
+          </div>
+        </div>
+        <div>
+          <div data-t="s06.statsLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">Статы героя</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12)"><div data-t="s06.stat1" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Здоровье</div><div data-t="s06.stat2" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Атака</div><div data-t="s06.stat3" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Скорость</div><div data-t="s06.stat4" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Броня и сопротивление</div><div data-t="s06.stat5" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Шанс и сила крита</div><div data-t="s06.stat6" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82)">Шанс эффекта и стойкость</div><div data-t="s06.stat7" style="background:oklch(.1448 0 0);padding:.9rem 1rem;font-size:.92rem;color:rgba(240,237,230,.82);grid-column:1 / -1">Энергия ульты — 4 параметра: старт, набор за действие, набор за урон, порог</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 07 · Прокачка и гача ══════════ -->
+  <section data-screen-label="07 Прокачка и гача" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s07.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 07 ] · Прокачка и гача</div>
+        <h2 data-t="s07.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Три вектора усиления, три пути к герою</h2>
+      </div>
+      <div data-reveal style="margin-bottom:1.4rem">
+        <div data-t="s07.vLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">Как усиливаем</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem"><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.c1.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Уровень</div><p data-t="s07.c1.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">До 50 за ресурсы крафта. Тир ресурса растёт каждые 10 уровней; 3 ресурса тира N + валюта = ресурс тира N+1.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.c2.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Звёзды</div><p data-t="s07.c2.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">Дубликаты героя повышают звёзды. Лишние дубли конвертируются — ничего не сгорает.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.c3.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Способности</div><p data-t="s07.c3.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">Уровень навыков за отдельный ресурс. После релиза сверху ляжет талант-дерево с кнопкой «рекомендуемый билд».</p></div></div>
+      </div>
+      <div data-reveal style="display:flex;gap:1rem;align-items:flex-start;background:color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 11%, oklch(.1448 0 0));border-left:2px solid var(--red,oklch(.6329 .2075 31.49));padding:1.3rem 1.6rem;margin-bottom:2.4rem">
+        <p data-t="s07.note" style="margin:0;font-size:clamp(.98rem,1.15vw,1.12rem);line-height:1.5;color:rgba(240,237,230,.85)">Полностью прокачанный герой ≈ $100 вложений — деньгами, ресурсами или временем. Это якорь экономики: цены, дропы и офферы считаем от него.</p>
+      </div>
+      <div data-reveal>
+        <div data-t="s07.gLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:.9rem">Откуда герои</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem"><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.g1.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Призыв</div><p data-t="s07.g1.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">За хард-валюту, даёт целого героя сразу.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.g2.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Осколки</div><p data-t="s07.g2.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">Капают из кампании, ивентов и магазина. Путь бесплатного игрока и рычаг офферов.</p></div><div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.4rem,2.2vw,2.1rem)"><div data-t="s07.g3.k" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.7rem">Гарант</div><p data-t="s07.g3.p" style="margin:0;font-size:1rem;line-height:1.5;color:rgba(240,237,230,.78)">Мягкий и жёсткий потолки: серия призывов гарантирует героя.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 08 · Рейтинговый PvP ══════════ -->
+  <section id="pvp" data-screen-label="08 Рейтинговый PvP" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s08.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 08 ] · Рейтинговый PvP</div>
+        <h2 data-t="s08.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Два слоя PvP: у лиг и ТОПа свои правила</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:1.2rem;align-items:stretch">
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)">
+          <div data-t="s08.aLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,230,.45);margin-bottom:1.2rem">Как устроено</div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.9rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.a.li1">Очки за победы; по очкам — подъём и спуск между лигами.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.a.li2">ТОП: прошёл порог — бьёшься за конкретное место и забираешь его у соперника.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.a.li3">В обороне стоит слепок отряда; проиграл защиту — потерял очки.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.a.li4">Список соперников ограничен; обновление — по правилам, расширение только платное.</span></li></ul>
+        </div>
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem);background:rgba(240,237,230,.03)">
+          <div data-t="s08.bLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.2rem">Сезон · 4 недели</div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.9rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.b.li1">Мягкий сброс: опускаешься на пару лиг, не в ноль.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.b.li2">Награды всем по лиге, внизу — символические.</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.45;color:rgba(240,237,230,.8)"><span style="color:var(--red,oklch(.6329 .2075 31.49))">→</span><span data-t="s08.b.li3">Уникальные аватар и рамка — только у топ-5 сезона.</span></li></ul>
+        </div>
+      </div>
+      <p data-t="s08.foot" data-reveal style="margin:1.4rem 0 0;font-size:.95rem;line-height:1.5;color:rgba(240,237,230,.55);max-width:75ch">Схема проверена: так работают Raid, Hero&nbsp;Wars, Summoners&nbsp;War.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 09 · Монетизация ══════════ -->
+  <section data-screen-label="09 Монетизация" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s09.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 09 ] · Монетизация</div>
+        <h2 data-t="s09.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Заложена с первого дня</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12);margin-bottom:1.4rem"><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">01</div><div data-t="s09.c1.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Офферы</div><p data-t="s09.c1.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Наборы и акции с триггерами и таймерами.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">02</div><div data-t="s09.c2.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Персональные офферы</div><p data-t="s09.c2.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Состав пакета собирается под прогресс и нехватку конкретного игрока.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">03</div><div data-t="s09.c3.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Подписка «без рекламы»</div><p data-t="s09.c3.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Фиксированная цена за чистый опыт.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">04</div><div data-t="s09.c4.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">VIP-подписка</div><p data-t="s09.c4.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Ускорения, лимиты, валюта.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">05</div><div data-t="s09.c5.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Гача</div><p data-t="s09.c5.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Призывы за хард-валюту, баннеры с рейт-апом.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">06</div><div data-t="s09.c6.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Энергия PvP</div><p data-t="s09.c6.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Платные попытки и обновление списка соперников.</p></div></div>
+      <div data-reveal style="display:flex;gap:1rem;align-items:flex-start;background:color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 11%, oklch(.1448 0 0));border-left:2px solid var(--red,oklch(.6329 .2075 31.49));padding:1.3rem 1.6rem">
+        <span data-t="s09.noteLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));padding-top:.2rem;white-space:nowrap">Урок</span>
+        <p data-t="s09.note" style="margin:0;font-size:clamp(1rem,1.2vw,1.18rem);line-height:1.5">Прошлые проекты запускались без монетизации — не собрали ни денег, ни данных о платящих. Монетизация входит в первый релиз, не «потом».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10 · Скоуп первого релиза ══════════ -->
+  <section id="reliz" data-screen-label="10 Скоуп релиза" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem;max-width:760px">
+        <div data-t="s10.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 10 ] · Скоуп первого релиза</div>
+        <h2 data-t="s10.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Что обязаны сделать к запуску</h2>
+        <p data-t="s10.lead" style="margin:1.2rem 0 0;font-size:clamp(1rem,1.15vw,1.15rem);line-height:1.55;color:rgba(240,237,230,.6);max-width:66ch">Три списка ниже — контракт релиза. Вычеркнуть из них можно, вписать новое — только через пересмотр сроков.</p>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;align-items:stretch">
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem"><span data-t="s10.aTitle" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red,oklch(.6329 .2075 31.49))">Фичи</span><span data-t="s10.aTag" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:oklch(.1448 0 0);background:var(--red,oklch(.6329 .2075 31.49));padding:.35rem .6rem">P0</span></div><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li1">Вход, аккаунт, профиль игрока</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li2">Бой: инициатива, энергия, таргетинг, реплеи</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li3">Кампания: стадии, награды, генерация ботов</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li4">PvP: лиги, ТОП, оборона, сезоны</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li5">Прокачка: уровень, звёзды, способности</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li6">Гача: призыв, осколки, гарант</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li7">Экономика: 3 валюты, ресурсы 5 тиров, крафт</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li8">Монетизация: офферы, персонализация, 2 подписки</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li9">Онбординг до первого PvP-боя</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.a.li10">Аналитика событий и ручки баланса</span></li></ul></div>
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem"><span data-t="s10.bTitle" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red,oklch(.6329 .2075 31.49))">Графика</span><span data-t="s10.bTag" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.5);border:1px solid rgba(240,237,230,.2);padding:.35rem .6rem">Черновик · к обсуждению</span></div><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li1">15–18 героев: сплэш, боевой спрайт, портрет</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li2">Анимации героя: идл, атака, каст, урон, смерть</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li3">Иконки способностей — 2–3 на героя</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li4">~12 экранов UI: хаб, бой, карта, арена, герой, гача, магазин</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li5">4–5 боевых фонов</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li6">VFX: удары, ульты, баффы; призыв и левел-ап</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li7">Иконки экономики: валюты, ресурсы 5 тиров, осколки</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.b.li8">Сторовый набор: иконка, скриншоты, баннеры</span></li></ul></div>
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem"><span data-t="s10.cTitle" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red,oklch(.6329 .2075 31.49))">Стек</span><span data-t="s10.cTag" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.5);border:1px solid rgba(240,237,230,.2);padding:.35rem .6rem">Решено</span></div><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li1">Unity — клиент</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li2">Свой сервер — вся авторитетная логика</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li3">Lua — детерминированная симуляция боя</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li4">База профилей и инвентаря</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li5">Сервис офферов и подписок</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li6">Аналитика событий</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s10.c.li7">Админка: баланс, баннеры, офферы</span></li></ul></div>
+      </div>
+      <p data-t="s10.foot" data-reveal style="margin:1.4rem 0 0;font-size:.95rem;line-height:1.5;color:rgba(240,237,230,.55);max-width:75ch">Числа по графике — черновик, обсуждаем на брифе. Список фич — не черновик.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 11 · Не делаем на старте ══════════ -->
+  <section data-screen-label="11 Не делаем" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s11.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 11 ] · Не делаем на старте</div>
+        <h2 data-t="s11.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Отрезано осознанно</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12);margin-bottom:1.4rem"><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i1" style="font-size:1rem;color:rgba(240,237,230,.75)">Снаряжение, артефакты, боевые баффы</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i2" style="font-size:1rem;color:rgba(240,237,230,.75)">Живые синхронные бои</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i3" style="font-size:1rem;color:rgba(240,237,230,.75)">Гильдии и кооп-боссы</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i4" style="font-size:1rem;color:rgba(240,237,230,.75)">Белая и чёрная фракции</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i5" style="font-size:1rem;color:rgba(240,237,230,.75)">Полное талант-дерево — код закладываем сразу, включаем позже</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i6" style="font-size:1rem;color:rgba(240,237,230,.75)">Сюжет и катсцены в кампании</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i7" style="font-size:1rem;color:rgba(240,237,230,.75)">ПК-версия</span></div><div style="background:oklch(.1448 0 0);padding:1.1rem 1.4rem;display:flex;gap:.8rem;align-items:center"><span style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace">✕</span><span data-t="s11.i8" style="font-size:1rem;color:rgba(240,237,230,.75)">QoL-подписки и карточки</span></div></div>
+      <p data-t="s11.foot" data-reveal style="margin:0;font-size:.95rem;line-height:1.5;color:rgba(240,237,230,.55)">Каждый пункт — кандидат в обновления после запуска. Ничего не потеряно — просто не сейчас.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 12 · Цели софт-лонча ══════════ -->
+  <section data-screen-label="12 Цели софт-лонча" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s12.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 12 ] · Цели софт-лонча</div>
+        <h2 data-t="s12.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">По каким числам судим запуск</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,237,230,.12);border:1px solid rgba(240,237,230,.12)"><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">01</div><div data-t="s12.c1.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">PvP-ядро</div><p data-t="s12.c1.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">В первую сессию игрок доходит до арены и делает хотя бы один рейтинговый бой. Дальше следим за частотой боёв на DAU.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">02</div><div data-t="s12.c2.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Ретеншн</div><p data-t="s12.c2.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Цель: D1 ≥ 35% · D7 ≥ 15% · D30 ≥ 6%. Это уровень топ-квартиля жанра — медиана рынка заметно ниже.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">03</div><div data-t="s12.c3.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Платящие</div><p data-t="s12.c3.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Конверсия ≥ 2% при медиане рынка ~1.6–1.8%. ARPDAU midcore-RPG: $0.3–1.0 — на софт-лонче целимся в нижнюю границу.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">04</div><div data-t="s12.c4.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Сессии</div><p data-t="s12.c4.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Ориентир жанра: 4–7 заходов в день по 10–15 минут. Наша цель: от 3 заходов по 5–10 минут.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">05</div><div data-t="s12.c5.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Статистика прокачки</div><p data-t="s12.c5.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Собираем по трём векторам: что качают первым, где стопорится медианный игрок, доля дошедших до 20/30/50 уровня.</p></div><div style="background:oklch(.1448 0 0);padding:clamp(1.3rem,2vw,1.8rem)"><div style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-size:.72rem;margin-bottom:.7rem">06</div><div data-t="s12.c6.t" style="font-weight:700;font-size:1.02rem;margin-bottom:.35rem">Честность</div><p data-t="s12.c6.p" style="margin:0;font-size:.9rem;line-height:1.45;color:rgba(240,237,230,.6)">Сервер сравнивает хеш реплея клиента со своим; расхождения и аномальные серии побед уходят в алерты. Цель — ноль подмен.</p></div></div>
+      <p data-t="s12.foot" data-reveal style="margin:1.4rem 0 0;font-size:.95rem;line-height:1.5;color:rgba(240,237,230,.55);max-width:75ch">Ориентиры жанра — открытые бенчмарки 2025: GameAnalytics, AppMagic, MAF.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ 13 · Команда и план ══════════ -->
+  <section id="plan" data-screen-label="13 Команда и план" style="position:relative;padding:clamp(72px,11vh,140px) 0;border-top:1px solid rgba(240,237,230,.12)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div data-reveal style="margin-bottom:2.6rem">
+        <div data-t="s13.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.4rem">[ 13 ] · Команда и план</div>
+        <h2 data-t="s13.h2" style="font-family:'Golos Text',sans-serif;font-weight:700;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.04;letter-spacing:-.03em;margin:0">Кто что делает и в каком порядке</h2>
+      </div>
+      <div data-reveal style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem">
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)"><div style="display:flex;align-items:baseline;gap:.7rem;margin-bottom:1.4rem"><span data-t="s13.aName" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red,oklch(.6329 .2075 31.49))">Дима</span><span data-t="s13.aRole" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.45)">Клиент · арт · дизайн</span></div><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.a.li1">Клиент на Unity</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.a.li2">Экраны, интерфейс, показ боя</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.a.li3">Арт: герои, фоны, VFX, сторовый набор</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.a.li4">Дизайн-документация</span></li></ul></div>
+        <div style="border:1px solid rgba(240,237,230,.14);padding:clamp(1.6rem,2.6vw,2.4rem)"><div style="display:flex;align-items:baseline;gap:.7rem;margin-bottom:1.4rem"><span data-t="s13.bName" style="font-family:'JetBrains Mono',monospace;font-weight:800;font-size:1.3rem;color:var(--red,oklch(.6329 .2075 31.49))">Паша</span><span data-t="s13.bRole" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.45)">Бэкенд · симуляция</span></div><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.85rem"><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.b.li1">Сервер, профиль, база</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.b.li2">Детерминированный бой на Lua</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.b.li3">Экономика, гача, рейтинг — на сервере</span></li><li style="display:flex;gap:.7rem;font-size:1rem;line-height:1.4;color:rgba(240,237,230,.8)"><span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));margin-top:.55rem;flex-shrink:0"></span><span data-t="s13.b.li4">Аналитика и админ-ручки баланса</span></li></ul></div>
+      </div>
+      <div data-reveal style="overflow-x:auto;border:1px solid rgba(240,237,230,.12)">
+        <table style="width:100%;border-collapse:collapse;min-width:640px;font-size:.92rem">
+          <thead>
+            <tr style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,237,230,.5);text-align:left">
+              <th data-t="s13.th1" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.16);font-weight:700;width:22%">Фаза</th>
+              <th data-t="s13.th2" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.16);font-weight:700">Бэкенд · Паша</th>
+              <th data-t="s13.th3" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.16);font-weight:700">Клиент и арт · Дима</th>
+            </tr>
+          </thead>
+          <tbody style="color:rgba(240,237,230,.8)">
+            <tr><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">0</span> · <span data-t="s13.r0.phase">Фундамент</span></td><td data-t="s13.r0.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Сервер, вход, база профиля, бой на Lua</td><td data-t="s13.r0.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Каркас Unity, модель данных, показ боя</td></tr>
+            <tr style="background:rgba(240,237,230,.02)"><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">1</span> · <span data-t="s13.r1.phase">Бой и герои</span></td><td data-t="s13.r1.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Расчёт силы, генерация ботов</td><td data-t="s13.r1.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Сбор отряда, расстановка, карточка героя</td></tr>
+            <tr><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">2</span> · <span data-t="s13.r2.phase">Кампания</span></td><td data-t="s13.r2.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Сложность, награды, прогресс</td><td data-t="s13.r2.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Карта стадий, экран боя, выдача наград</td></tr>
+            <tr style="background:rgba(240,237,230,.02)"><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">3</span> · <span data-t="s13.r3.phase">Прокачка и экономика</span></td><td data-t="s13.r3.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Валюты, ресурсы, крафт, гача</td><td data-t="s13.r3.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Экраны прокачки, гачи, инвентарь</td></tr>
+            <tr><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">4</span> · <span data-t="s13.r4.phase">Рейтинговый PvP</span></td><td data-t="s13.r4.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Лиги, подбор, оборона, ТОП, сезоны</td><td data-t="s13.r4.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Арена, соперники, лиги, профиль</td></tr>
+            <tr style="background:rgba(240,237,230,.02)"><td style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">5</span> · <span data-t="s13.r5.phase">Монетизация</span></td><td data-t="s13.r5.be" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Офферы, персонализация, подписки</td><td data-t="s13.r5.cl" style="padding:1rem 1.2rem;border-bottom:1px solid rgba(240,237,230,.08);vertical-align:top">Магазин, экраны офферов и подписок</td></tr>
+            <tr><td style="padding:1rem 1.2rem;vertical-align:top"><span style="font-family:'JetBrains Mono',monospace;color:var(--red,oklch(.6329 .2075 31.49));font-weight:700">6</span> · <span data-t="s13.r6.phase">Мягкий запуск</span></td><td data-t="s13.r6.be" style="padding:1rem 1.2rem;vertical-align:top">Аналитика, защита, ручки баланса</td><td data-t="s13.r6.cl" style="padding:1rem 1.2rem;vertical-align:top">Онбординг, полировка, «рекомендуемый билд»</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p data-reveal style="margin:1.4rem 0 0;font-size:.95rem;line-height:1.5;color:rgba(240,237,230,.55);max-width:80ch"><span data-t="s13.footLabel" style="color:var(--red,oklch(.6329 .2075 31.49));font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin-right:.5rem">После запуска</span><span data-t="s13.foot">Талант-дерево, белая и чёрная фракции, снаряжение, гильдии, живые бои, rewarded-реклама.</span></p>
+    </div>
+  </section>
+
+  <!-- ══════════ 14 · Дальше — CTA c вихрем ══════════ -->
+  <section id="dalshe" data-screen-label="14 Дальше" style="position:relative;padding:clamp(90px,14vh,180px) 0 clamp(80px,12vh,150px);border-top:1px solid rgba(240,237,230,.12);overflow:hidden">
+    <img id="fury-vortex" src="images/vortex.png" alt="" aria-hidden="true" style="position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:min(1400px,150%);opacity:.5;pointer-events:none;mask-image:radial-gradient(70% 80% at 50% 100%,#000 40%,transparent 80%);-webkit-mask-image:radial-gradient(70% 80% at 50% 100%,#000 40%,transparent 80%)">
+    <div style="position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px);text-align:center">
+      <div data-reveal style="max-width:820px;margin:0 auto">
+        <div data-t="s14.eyebrow" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:1.6rem">[ 14 ] · Дальше</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-bottom:2.6rem"><span data-t="s14.tag1" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;border:1px solid rgba(240,237,230,.2);padding:.6rem 1rem">Подтвердить принципы</span><span data-t="s14.tag2" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;border:1px solid rgba(240,237,230,.2);padding:.6rem 1rem">Подтвердить скоуп релиза</span><span data-t="s14.tag3" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;border:1px solid rgba(240,237,230,.2);padding:.6rem 1rem">Подтвердить цели запуска</span></div>
+      </div>
+      <div data-reveal style="max-width:640px;margin:0 auto;background:color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 12%, oklch(.1448 0 0));border:1px solid color-mix(in oklch, var(--red,oklch(.6329 .2075 31.49)) 40%, transparent);padding:1.6rem 1.8rem">
+        <div data-t="s14.boxLabel" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;color:var(--red,oklch(.6329 .2075 31.49));margin-bottom:.8rem">От команды на брифе</div>
+        <p data-t="s14.box" style="margin:0;font-size:clamp(1.05rem,1.5vw,1.3rem);line-height:1.45;font-weight:500">Подтвердить принципы, скоуп релиза, цели запуска и зоны ответственности.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer style="position:relative;border-top:1px solid rgba(240,237,230,.12);background:oklch(.1448 0 0);padding:clamp(3rem,6vh,5rem) 0 clamp(3rem,6vh,4rem)">
+    <div style="max-width:1200px;margin:0 auto;padding:0 clamp(24px,5vw,48px)">
+      <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div data-t="brand" style="font-family:'Golos Text',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-.02em;line-height:1">FURY</div>
+          <p data-t="footer.desc" style="margin:.9rem 0 0;font-size:.9rem;line-height:1.5;color:rgba(240,237,230,.4);max-width:36ch">Внутренний бриф FURY: что делаем, для кого и что входит в первый релиз.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:.6rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,237,230,.5)">
+          <span style="width:6px;height:6px;background:var(--red,oklch(.6329 .2075 31.49));animation:furyblink 1.6s step-end infinite"></span><span data-t="footer.status">Ядро зафиксировано · 2026</span>
+        </div>
+      </div>
+      <div style="margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid rgba(240,237,230,.1);display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,237,230,.35)">
+        <span data-t="footer.left">FURY · бриф первого релиза</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ══════════ Тексты сайта: правятся в content.js, а не здесь ══════════ -->
+<script src="content.js"></script>
+<script>
+// Подставляет тексты из content.js в элементы, помеченные атрибутом data-t.
+// Если content.js отсутствует/не загрузился — на странице остаётся текст,
+// зашитый прямо в HTML (запасной вариант), так что вёрстка не ломается.
+(function () {
+  var raw = window.FURY_TEXT;
+  if (!raw) return;
+  var map = {}, curKey = null, buf = [];
+  raw.split('\n').forEach(function (line) {
+    var m = line.match(/^##\s+(\S+)\s*$/);
+    if (m) { if (curKey !== null) map[curKey] = buf.join('\n').trim(); curKey = m[1]; buf = []; }
+    else if (curKey !== null) buf.push(line);
+  });
+  if (curKey !== null) map[curKey] = buf.join('\n').trim();
+  function apply() {
+    var nodes = document.querySelectorAll('[data-t]');
+    for (var i = 0; i < nodes.length; i++) {
+      var k = nodes[i].getAttribute('data-t');
+      if (Object.prototype.hasOwnProperty.call(map, k)) nodes[i].innerHTML = map[k];
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
+  else apply();
+})();
+</script>
+<script>
+// FURY presentation — theme accent, scroll-reveal and vortex parallax.
+// Ported from the Claude Design prototype's DCLogic component to plain vanilla JS.
+(function () {
+  var ACCENT = 'oklch(.6329 .2075 31.49)'; // brand red
+  var TEXTURE = true;                        // scanline + grain overlays
+  var MOTION = 'full';                       // 'full' | 'reduced'
+
+  var prefersReduced = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduce = MOTION === 'reduced' || prefersReduced;
+
+  function applyTheme() {
+    document.documentElement.style.setProperty('--red', ACCENT);
+    var scan = document.getElementById('fury-scan');
+    var noise = document.getElementById('fury-noise');
+    if (scan) scan.style.display = TEXTURE ? '' : 'none';
+    if (noise) noise.style.display = TEXTURE ? '' : 'none';
+  }
+
+  function setupReveal() {
+    var els = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+    if (reduce) {
+      els.forEach(function (el) { el.style.opacity = '1'; el.style.transform = 'none'; });
+      return;
+    }
+    els.forEach(function (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity .75s cubic-bezier(.16,1,.3,1), transform .75s cubic-bezier(.16,1,.3,1)';
+      el.style.willChange = 'opacity, transform';
+    });
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.style.opacity = '1'; el.style.transform = 'none'; });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  function setupParallax() {
+    if (reduce) return;
+    var vortex = document.getElementById('fury-vortex');
+    if (!vortex) return;
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var rect = vortex.getBoundingClientRect();
+        var vh = window.innerHeight || 1;
+        var prog = 1 - Math.max(0, Math.min(1, rect.top / vh));
+        vortex.style.transform =
+          'translateX(-50%) translateY(' + (prog * -40) + 'px) scale(' + (1 + prog * 0.06) + ')';
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  function setupTopbar() {
+    var bar = document.getElementById('fury-topbar');
+    var hero = document.getElementById('fury-hero');
+    if (!bar || !hero) return;
+    var visible = null;
+    var ticking = false;
+    function update() {
+      // Show the bar once the red hero (including its ticker strip) has scrolled past the top.
+      // Threshold = bar height, so a section aligned just below the bar triggers it exactly.
+      var past = hero.getBoundingClientRect().bottom <= bar.offsetHeight + 2;
+      if (past === visible) return;
+      visible = past;
+      bar.style.transform = past ? 'translateY(0)' : 'translateY(-100%)';
+      bar.style.opacity = past ? '1' : '0';
+      bar.style.pointerEvents = past ? 'auto' : 'none';
+      bar.setAttribute('aria-hidden', past ? 'false' : 'true');
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { update(); ticking = false; });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+
+  function setupNext() {
+    // Кнопки «Дальше →» листают к следующему блоку от текущей позиции,
+    // а не прыгают в самый низ.
+    var btns = document.querySelectorAll('[data-t="nav.next"]');
+    if (!btns.length) return;
+    var bar = document.getElementById('fury-topbar');
+    var targets = [].slice.call(document.querySelectorAll('#fury-root > section'));
+    var footer = document.querySelector('#fury-root > footer');
+    if (footer) targets.push(footer);
+    function go(e) {
+      e.preventDefault();
+      var offset = bar ? bar.offsetHeight : 0;
+      var next = null;
+      for (var i = 0; i < targets.length; i++) {
+        // первый блок, чей верх заметно ниже нижней кромки закреплённой панели
+        if (targets[i].getBoundingClientRect().top > offset + 4) { next = targets[i]; break; }
+      }
+      if (!next) return; // ниже ничего нет — уже у низа, стоим на месте
+      var y = window.pageYOffset + next.getBoundingClientRect().top - offset;
+      if (y <= window.pageYOffset + 2) return; // только вперёд, назад не листаем
+      window.scrollTo({ top: Math.max(0, Math.round(y)), behavior: reduce ? 'auto' : 'smooth' });
+    }
+    for (var i = 0; i < btns.length; i++) btns[i].addEventListener('click', go);
+  }
+
+  function init() {
+    applyTheme();
+    setupReveal();
+    setupParallax();
+    setupTopbar();
+    setupNext();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
